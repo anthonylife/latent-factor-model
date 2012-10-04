@@ -75,4 +75,6 @@ python getTagFreq.py ../Temporal_Data/LosAngeles_user_tag.temp.1 ../Temporal_Dat
 python filterTagByFreq.py ../Temporal_Data/NewYork_tag.temp.1 ../Temporal_Data/NewYork_user_tag.temp.1 ../Temporal_Data/NewYork_group_tag.temp.1 ../Clean_data/NewYork_user_tag.csv ../Clean_data/NewYork_group_tag.csv
 python filterTagByFreq.py ../Temporal_Data/LosAngeles_tag.temp.1 ../Temporal_Data/LosAngeles_user_tag.temp.1 ../Temporal_Data/LosAngeles_group_tag.temp.1 ../Clean_data/LosAngeles_user_tag.csv ../Clean_data/LosAngeles_group_tag.csv
 
+python filterByOneItem.py ../Clean_data/NewYork_event.csv ../Clean_data/NewYork_user_event.csv 1 ../Clean_data/NewYork_user_event.csv1
+python filterByOneItem.py ../Clean_data/LosAngeles_event.csv ../Clean_data/LosAngeles_user_event.csv 1 ../Clean_data/LosAngeles_user_event.csv1
 
