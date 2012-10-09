@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     freqDis = {}
     for line in open(sys.argv[1]):
-        dis = str(ceil(float(line.strip('\n').split(',')[2])))
+        dis = str(ceil(float(line.strip('\n').split(',')[1])))
         if freqDis.has_key(dis):
             freqDis[dis] += 1
         else:
