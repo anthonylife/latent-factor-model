@@ -5,9 +5,10 @@
 ## It gives the feature file output with the following fields:
 #   1.nearest distance between events of target user and locations of users in target group
 #   2.average distance between events of target user and locations of target users in target group
+#   Note: need to erase the events in target groups
 
 '''
-python mkEventHomeDis.py ../Clean_Data/NewYork_user_group.csv ../Clean_Data/NewYork_user_event.csv ../Clean_Data/NewYork_event_lon_lat.csv ../Clean_Data/NewYork_user_group.csv ../Clean_Data/NewYork_user_lon_lat.csv ../Temporal_Data/NewYork_event_group_user_dis.csv
+python mkEventHomeDis.py ../Clean_Data/NewYork_user_group.features.csv ../Clean_Data/NewYork_user_event.csv ../Clean_Data/NewYork_event_lon_lat.csv ../Clean_Data/NewYork_user_group.csv ../Clean_Data/NewYork_user_lon_lat.csv ../Clean_Data/NewYork_event_group.csv ../Temporal_Data/NewYork_event_group_user_dis.csv
 '''
 
 import sys
@@ -36,8 +37,8 @@ def calMinDis(events, events_locations, users, user_locations):
     return min_dis
 
 if __name__ == "__main__":
-    if len(sys.argv) != 7:
-        print 'usage: <user_group_feature.in> <user_event.in> <event_location.in> <user_group.in> <user_location.in> <event_group_event_dis.out>'
+    if len(sys.argv) != 8:
+        print 'usage: <user_group_feature.in> <user_event.in> <event_location.in> <user_group.in> <user_location.in> <event_group.in> <event_group_home_dis.out>'
         sys.exit(1)
 
     user_events = {}
@@ -66,10 +67,23 @@ if __name__ == "__main__":
         res = line.strip('\n').split(',')
         user_locations[res[0]] = map(lambda x: float(x), res[1:])
 
-    wfd = open(sys.argv[6], 'w')
+    group_events = {}
+    for line in open(sys.argv[6]):
+        res = line.strip('\n').split(',')
+        if res[1] in group_events:
+            group_events[res[1]].append(res[0])
+        else:
+            group_events[res[1]] = res[:1]
+
+    wfd = open(sys.argv[7], 'w')
     for line in open(sys.argv[1]):
         res = line.strip('\n').split(',')
-        average_dis = calAverageDis(user_events[res[0]], event_locations, group_users[res[1]], user_locations)
-        min_dis = calMinDis(user_events[res[0]], event_locations, group_users[res[1]], user_locations)
-        wfd.write("%s,%s,%f,%f\n" % (res[0], res[1], min_dis, average_dis))
+        events = set(user_events[res[1]]) - set(group_events[res[2]])   # Note: need to erase the events in target groups
+        if len(events) > 0:
+            average_dis = calAverageDis(events, event_locations, group_users[res[2]], user_locations)
+            min_dis = calMinDis(events, event_locations, group_users[res[2]], user_locations)
+            wfd.write("%s,%f,%f\n" % (line.strip('\n'), min_dis, average_dis))
+        else:
+            print len(user_events[res[1]])
+            wfd.write("%s,20,40\n" % line.strip('\n'))    # user -1 as placeholder.
     wfd.close()

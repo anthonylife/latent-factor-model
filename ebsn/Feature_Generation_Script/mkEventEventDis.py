@@ -7,7 +7,7 @@
 #   2.average distance between events of target user and events in target group
 
 '''
-python mkEventEventDis.py ../Clean_Data/NewYork_user_group.csv ../Clean_Data/NewYork_user_event.csv ../Clean_Data/NewYork_event_lon_lat.csv ../Clean_Data/NewYork_event_group.csv ../Temporal_Data/NewYork_event_group_event_dis.csv
+python mkEventEventDis.py ../Clean_Data/NewYork_user_group.csv ../Clean_Data/NewYork_user_event.csv ../Clean_Data/NewYork_event_lon_lat.csv ../Clean_Data/NewYork_event_group.csv ../Clean_Data/NewYork_event_group.csv ../Temporal_Data/NewYork_event_group_event_dis.csv
 '''
 
 import sys
@@ -64,10 +64,15 @@ if __name__ == "__main__":
     wfd = open(sys.argv[5], 'w')
     for line in open(sys.argv[1]):
         res = line.strip('\n').split(',')
-        if not group_events.has_key(res[1]) or not user_events.has_key(res[0]):
-            print 'Not having the group key or user key: group->%s, user->%s' % (res[1], res[0])
+        if not group_events.has_key(res[2]) or not user_events.has_key(res[1]):
+            print 'Not having the group key or user key: group->%s, user->%s' % (res[2], res[1])
             sys.exit(1)
-        average_dis = calAverageDis(user_events[res[0]], group_events[res[1]], event_locations)
-        min_dis = calMinDis(user_events[res[0]], group_events[res[1]], event_locations)
-        wfd.write("%s,%s,%f,%f\n" % (res[0], res[1], min_dis, average_dis))
+        events = set(user_events[res[1]]) - set(group_events[res[2]])   # Note: need to erase the events in target groups
+        if len(events) > 0:
+            average_dis = calAverageDis(events, group_events[res[2]], event_locations)
+            min_dis = calMinDis(events, group_events[res[2]], event_locations)
+            wfd.write("%s,%f,%f\n" % (line.strip('\n'), min_dis, average_dis))
+        else:
+            print len(user_events[res[1]])
+            wfd.write("%s,20,30\n" % line.strip('\n'))
     wfd.close()

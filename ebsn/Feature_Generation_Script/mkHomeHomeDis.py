@@ -34,20 +34,20 @@ if __name__ == "__main__":
     wfd = open(sys.argv[4], 'w')
     for line in open(sys.argv[1]):
         res = line.strip('\n').split(',')
-        if not group_users.has_key(res[1]) or not user_locations.has_key(res[0]):
+        if not group_users.has_key(res[2]) or not user_locations.has_key(res[1]):
             print 'Not having the group key or the user key.'
             sys.exit(1)
 
         min_dis = 1000
         average_dis = 0
         num = 0
-        for user_id in group_users[res[1]]:
-            if user_id != res[0]:
-                dis = distance.distance(user_locations[user_id], user_locations[res[0]]).miles
+        for user_id in group_users[res[2]]:
+            if user_id != res[1]:
+                dis = distance.distance(user_locations[user_id], user_locations[res[1]]).miles
                 if dis < min_dis:
                     min_dis = dis
                 average_dis += dis
                 num += 1
 
-        wfd.write("%s,%s,%f,%f\n" % (res[0], res[1], min_dis, average_dis/num))
+        wfd.write("%s,%f,%f\n" % (line.strip('\n'), min_dis, average_dis/num))
     wfd.close()

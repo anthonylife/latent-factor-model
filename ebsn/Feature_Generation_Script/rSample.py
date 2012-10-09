@@ -15,8 +15,16 @@ if __name__ == "__main__":
     for line in open(sys.argv[1]):
         item_set.append(line)
 
-    wfd = open(sys.argv[3]+sys.argv[1]+"."+str(i+1), 'w')
-    samples = set(random.sample(item_set, cnt))
+    # Sample accroding to the specified number
+    if sys.argv[2].find('.') == -1:
+        sample_cnt = int(sys.argv[2])
+    # Sample accroding to the specified ratio
+    else:
+        ratio = float(sys.argv[2])
+        sample_cnt = len(item_set)*ratio
+
+    wfd = open(sys.argv[3], 'w')
+    samples = set(random.sample(item_set, sample_cnt))
     item_set = item_set-samples
     for sample in samples:
         wfd.write(sample)

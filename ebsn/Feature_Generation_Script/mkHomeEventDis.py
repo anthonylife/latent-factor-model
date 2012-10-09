@@ -37,14 +37,14 @@ if __name__ == "__main__":
     wfd = open(sys.argv[5], 'w')
     for line in open(sys.argv[1]):
         res = line.strip('\n').split(',')
-        user_location = user_locations[res[0]]
+        user_location = user_locations[res[1]]
         min_dis = 1000
         average_dis = 0
-        for event_id in group_event[res[1]]:
+        for event_id in group_event[res[2]]:
             event_location = event_locations[event_id]
             dis = distance.distance(map(lambda x: float(x), user_location), map(lambda x: float(x), event_location)).miles
             average_dis += dis
             if min_dis > dis:
                 min_dis = dis
-        wfd.write("%s,%s,%f,%f\n" % (res[0], res[1], min_dis, average_dis/len(group_event[res[1]])))
+        wfd.write("%s,%f,%f\n" % (line.strip('\n'), min_dis, average_dis/len(group_event[res[2]])))
     wfd.close()
