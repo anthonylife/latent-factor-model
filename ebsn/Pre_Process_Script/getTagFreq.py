@@ -8,7 +8,7 @@ python getTagFreq.py ../Temporal_Data/user_tag.temp.1 ../Temporal_Data/group_tag
 import sys
 
 # Threshold of tag frequency
-freq_threshold = 50
+freq_threshold = 10
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:

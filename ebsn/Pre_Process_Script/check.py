@@ -2,6 +2,7 @@
 #encoding=utf8
 
 import sys
+from geopy import distance
 
 def checkEventGroup():
     '''Function:
@@ -51,5 +52,31 @@ def checkEventGroup():
     print 'In count: %d.' % inCount
     print 'Out count: %d.' % outCount
 
+def checkDistance(eventLocationFile, userNearEventFile, userEventDisFile):
+    '''
+    python check.py ../Clean_data/event_lon_lat.csv ../Clean_data/user_near_event.csv ../Clean_data/user_event_di
+    '''
+    user_location = [-74.0, 40.68]
+    event_location_dic = {}
+    for line in open(eventLocationFile):
+        res = line.strip('\n').split(',')
+        event_location_dic[res[0]] = [float(res[1]),float(res[2])]
+
+    wfd = open(userEventDisFile, 'w')
+    for line in open(userNearEventFile):
+        event_id = line.strip('\n').split(',')[1]
+        event_location = map(lambda x: float(x), event_location_dic[event_id])
+        dis = distance.distance(user_location, event_location).miles
+        if dis > 20:
+            print 'Error'
+            sys.exit(1)
+        wfd.write(str(dis) + '\n')
+    wfd.close()
+
 if __name__ == "__main__":
-    checkEventGroup()
+    #checkEventGroup()
+
+    if len(sys.argv) != 4:
+        print 'usage: <event_location.in> <user_near_event.in> <user_event_dis.out>'
+        sys.exit(1)
+    checkDistance(sys.argv[1],sys.argv[2],sys.argv[3])

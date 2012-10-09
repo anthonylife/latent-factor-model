@@ -10,6 +10,7 @@
 import sys
 #import math
 import datetime
+import threading
 from geopy import distance
 
 ## Global Variable Setting
@@ -19,6 +20,11 @@ dimNum = 2
 totalFinishCnt = 0
 # Distance threshold
 mileThreshold = 20
+# Thread number
+threadNum = 2
+# Finish user number
+userCnt = 0
+mylock = threading.RLock()
 
 # Create KD-tree
 # ================
@@ -79,10 +85,23 @@ def median(numbers):
         return (copy[n/2-1] + copy[n/2]) * 1.0 / 2
 
 # Search KD-tree
+# In order to use threa, we pack the following function in a class
 # ==============
+class multiSearch(threading.Thread):
+    def __init__(self, kdTree, searchDataFile, outputFile):
+        threading.Thread.__init__(self)
+        self.kdTree = kdTree
+        self.searchDataFile = searchDataFile
+        self.outputFile = outputFile
+
+    def run(self):
+        searchKDtree(self.kdTree, self.searchDataFile, self.outputFile)
+
 def searchKDtree(kdTree, searchDataFile, outputFile):
+    global userCnt
+
+    print ('haha')
     wfd = open(outputFile, 'w')
-    user_cnt = 0
     begin_time = datetime.datetime.now()
     for line in open(searchDataFile):
         res = line.strip('\n').split(',')
@@ -105,11 +124,16 @@ def searchKDtree(kdTree, searchDataFile, outputFile):
         '''# Test
         wfd.close()
         return'''
-        user_cnt +=1
-        if user_cnt % 2 == 0:
+        # Test
+        if userCnt == 99:
+            break
+        mylock.acquire()
+        userCnt +=1
+        if userCnt % 2 == 0:
             end_time = datetime.datetime.now()
-            print 'Cnt: %d, Cost time: %d...' % (user_cnt, (end_time-begin_time).seconds)
+            print 'User Cnt: %d, Cost time: %d...' % (userCnt, (end_time-begin_time).seconds)
             begin_time = datetime.datetime.now()
+        mylock.release()
     wfd.close()
 
     '''# Test
@@ -196,14 +220,21 @@ def traverseTree(root, locationVal, nearEvents):
 # Main function
 # =============
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
+    '''if len(sys.argv) != 4:
         print 'usage: <event_location.in> <user_location.in> <user_event_near.out>'
-        sys.exit(1)
+        sys.exit(1)'''
 
     print "Start creating KD tree."
     kd_tree = createKDtree(sys.argv[1])
     print "Finish creating KD tree."
-    searchKDtree(kd_tree, sys.argv[2], sys.argv[3])
+
+    print 'Start Thread 1'
+    thread1 = multiSearch(kd_tree, sys.argv[2], sys.argv[3])
+    thread1.start()
+    print 'Start Thread 2'
+    thread2 = multiSearch(kd_tree, sys.argv[4], sys.argv[5])
+    thread2.start()
+    # searchKDtree(kd_tree, sys.argv[2], sys.argv[3])
 
     '''# Test
     testEvent = {'1':[1,1], '2':[1,2], '3':[2,1], '4':[2,2]}

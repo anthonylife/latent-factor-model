@@ -7,6 +7,7 @@ python filterByOneItem.py ../Temporal_Data/group.temp.1 ../Temporal_Data/event_g
 python filterByOneItem.py ../Temporal_Data/user.temp.1 ../Meetup_geo/user_lon_lat.csv 0 ../Clean_data/user_lon_lat.csv
 python filterByOneItem.py ../Temporal_Data/user.temp.1 ../Meetup_tag/user_tag.new 0 ../Temporal_Data/user_tag.temp.1
 python filterByOneItem.py ../Temporal_Data/group.temp.1 ../Meetup_tag/group_tag.new 0 ../Temporal_Data/group_tag.temp.1
+python filterByOneItem.py ../Temporal_Data/event.temp.1 ../Meetup_geo/event_lon_lat.csv 0 ../Clean_data/event_lon_lat.csv
 '''
 
 import sys
@@ -20,7 +21,8 @@ if __name__ == "__main__":
     itemDic = {}
     for line in open(sys.argv[1]):
         line = line.strip('\n')
-        itemDic[line] = 1
+        if not itemDic.has_key(line):
+            itemDic[line] = 1
 
     wfd = open(sys.argv[4], 'w')
     for line in open(sys.argv[2]):

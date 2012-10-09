@@ -38,7 +38,7 @@ if __name__ == "__main__":
             user_lon_ln = user_location[user]
             if event_location.has_key(event):
                 event_lon_ln = event_location[event]
-                miles = distance.distance(user_lon_ln, event_lon_ln).miles
+                miles = distance.distance([user_lon_ln[1], user_lon_ln[0]], [event_lon_ln[1], event_lon_ln[0]]).miles  #NOTE!!!! Latitude first, longtitude second.
                 wfd.write("%s,%s,%s\n" % (user, event, str(miles)))
     wfd.close()
 

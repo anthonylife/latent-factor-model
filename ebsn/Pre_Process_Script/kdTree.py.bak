@@ -18,7 +18,7 @@ dimNum = 2
 # Finish Points
 totalFinishCnt = 0
 # Distance threshold
-mileThreshold = 20
+mileThreshold = 10
 
 # Create KD-tree
 # ================

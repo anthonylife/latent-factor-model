@@ -12,20 +12,26 @@ if __name__ == "__main__":
         print 'usage: <user.dic> <group.dic> <doc.in> <field.id(1,2,...)> <field.id(1,2,...)> <doc.out>'
         sys.exit(1)
 
-    userDic = {}
+    user_dic = {}
     for line in open(sys.argv[1]):
         line = line.strip('\n')
-        userDic[line] = 1
+        if line.find(',') > 0:
+            user_dic[line.split(',')[0]] = 1
+        else:
+            user_dic[line] = 1
 
-    groupDic = {}
+    group_dic = {}
     for line in open(sys.argv[2]):
         line = line.strip('\n')
-        groupDic[line] = 1
+        if line.find(',') > 0:
+            group_dic[line.split(',')[0]] = 1
+        else:
+            group_dic[line] = 1
 
     wfd = open(sys.argv[6], 'w')
     for line in open(sys.argv[3]):
         res = line.strip('\n').split(',')
-        if userDic.has_key(res[int(sys.argv[4])]) and groupDic.has_key(res[int(sys.argv[5])]):
+        if user_dic.has_key(res[int(sys.argv[4])]) and group_dic.has_key(res[int(sys.argv[5])]):
             wfd.write(line)
     wfd.close()
 
